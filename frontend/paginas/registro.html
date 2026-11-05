@@ -2,20 +2,64 @@
 <html lang="es">
 
 <head>
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registro - InfoTek</title>
-
     <link rel="stylesheet" href="../estilos/login.css">
-
+    <style>
+        .input-password-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+            width: 100%;
+            margin-bottom: 15px;
+        }
+        .input-password-container input {
+            width: 100%;
+            padding-right: 45px;
+            margin-bottom: 0 !important;
+        }
+        .toggle-eye {
+            position: absolute;
+            right: 12px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+        }
+        .btn:disabled {
+            opacity: 0.8;
+            cursor: not-allowed;
+            background-color: #2a2a80;
+        }
+        .cpu-fan-spinner {
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            margin-right: 8px;
+            vertical-align: middle;
+            animation: girarVentilador 0.8s linear infinite;
+        }
+        .cpu-fan-spinner::before {
+            content: "⚙️";
+            font-size: 16px;
+        }
+        @keyframes girarVentilador {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+    </style>
 </head>
 
 <body class="fondo-login">
 
     <div class="tarjeta-login">
 
-        <!-- Logo -->
         <img src="../recursos/imagenes/logo2.png" alt="InfoTek">
 
         <h1>Crear cuenta</h1>
@@ -37,21 +81,27 @@
                 required
             >
 
-            <input 
-                type="password"
-                id="password"
-                placeholder="Contraseña"
-                required
-            >
+            <div class="input-password-container">
+                <input 
+                    type="password"
+                    id="password"
+                    placeholder="Contraseña"
+                    required
+                >
+                <button type="button" id="btnTogglePassword1" class="toggle-eye" title="Mostrar contraseña">👁️</button>
+            </div>
 
-            <input 
-                type="password"
-                id="password2"
-                placeholder="Confirmar contraseña"
-                required
-            >
+            <div class="input-password-container">
+                <input 
+                    type="password"
+                    id="password2"
+                    placeholder="Confirmar contraseña"
+                    required
+                >
+                <button type="button" id="btnTogglePassword2" class="toggle-eye" title="Mostrar contraseña">👁️</button>
+            </div>
 
-            <button type="submit" class="btn">
+            <button type="submit" class="btn" id="btn-registro" style="margin-top: 15px;">
                 Registrarse
             </button>
 
@@ -64,7 +114,35 @@
 
     </div>
 
-    <!-- SCRIPT REGISTRO -->
+    <script>
+        function configurarTogglePassword(btnId, inputId) {
+            const btn = document.getElementById(btnId);
+            const input = document.getElementById(inputId);
+
+            btn.addEventListener("click", () => {
+                if (input.type === "password") {
+                    input.type = "text";
+                    btn.textContent = "🙈";
+                } else {
+                    input.type = "password";
+                    btn.textContent = "👁️";
+                }
+            });
+        }
+
+        configurarTogglePassword("btnTogglePassword1", "password");
+        configurarTogglePassword("btnTogglePassword2", "password2");
+
+        // Animación ventilador para el registro
+        const formRegistro = document.getElementById("form-registro");
+        const btnRegistro = document.getElementById("btn-registro");
+
+        formRegistro.addEventListener("submit", () => {
+            btnRegistro.disabled = true;
+            btnRegistro.innerHTML = `<span class="cpu-fan-spinner"></span> Registrando...`;
+        });
+    </script>
+
     <script src="../scripts/autenticacion.js"></script>
 
 </body>

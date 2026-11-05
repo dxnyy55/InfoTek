@@ -1,8 +1,38 @@
-// ===============================
-// 1. INYECTAR HTML DEL MODAL
-// ===============================
+// NOTIFICACIÓN FLOTANTE ELEGANTE
+function mostrarNotificacion(mensaje) {
+    const alertaExistente = document.getElementById("alerta-flotante-custom");
+    if (alertaExistente) alertaExistente.remove();
+
+    const alerta = document.createElement("div");
+    alerta.id = "alerta-flotante-custom";
+    alerta.textContent = mensaje;
+
+    Object.assign(alerta.style, {
+        position: "fixed",
+        top: "20px",
+        left: "50%",
+        transform: "translateX(-50%)",
+        background: "#191970",
+        color: "#ffffff",
+        padding: "12px 24px",
+        borderRadius: "8px",
+        boxShadow: "0 4px 15px rgba(0,0,0,0.2)",
+        fontSize: "15px",
+        fontWeight: "600",
+        zIndex: "10000",
+        transition: "opacity 0.3s ease"
+    });
+
+    document.body.appendChild(alerta);
+
+    setTimeout(() => {
+        alerta.style.opacity = "0";
+        setTimeout(() => alerta.remove(), 300);
+    }, 3500);
+}
+
+// INYECTAR HTML DEL MODAL
 function injectModalHTML() {
-    // Si ya existe, no lo duplicamos
     if (document.getElementById("modal-comparativa")) return;
 
     const html = `
@@ -26,12 +56,8 @@ function injectModalHTML() {
     document.body.insertAdjacentHTML("beforeend", html);
 }
 
-// ===============================
-// TABLA DE COMPARACIÓN
-// ===============================
-
+// GENERAR TABLA DE COMPARACIÓN
 function generarTabla(productos) {
-
     let html = `
     <table class="comparativa-tabla">
         <thead>
@@ -41,7 +67,6 @@ function generarTabla(productos) {
             </tr>
         </thead>
         <tbody>
-
             <tr>
                 <td>Imagen</td>
                 ${productos.map(p => `
@@ -62,10 +87,9 @@ function generarTabla(productos) {
             </tr>
     `;
 
-    // ESPECIFICACIONES REALES
     const keys = new Set();
     productos.forEach(p => {
-        Object.keys(p.especificaciones).forEach(k => keys.add(k));
+        Object.keys(p.especificaciones || {}).forEach(k => keys.add(k));
     });
 
     keys.forEach(key => {
@@ -81,57 +105,46 @@ function generarTabla(productos) {
     return html;
 }
 
-// ===============================
-// 3. GRÁFICA COMPARATIVA (APEXCHARTS)
-// ===============================
-
 let grafica = null;
 
+// GENERAR GRÁFICA COMPARATIVA
 function generarGraficaComparativa(productos) {
     const contenedor = document.getElementById("canvas-comparativa");
     if (!contenedor) return;
 
     if (grafica) grafica.destroy();
 
-    // Extraer fechas del primer producto como referencia para el eje X
-    const categoriasX = productos[0]?.historialPrecios?.map(h => h.fecha) || ["Semana 1", "Semana 2", "Semana 3", "Semana 4"];
-
     const opciones = {
-    chart: {
-        type: "line",
-        height: 300,
-        toolbar: {
-            show: true,
-            tools: {
-                download: false,
-                selection: false,
-                zoom: false,
-                zoomin: true,
-                zoomout: true,
-                pan: false,
-                reset: false
+        chart: {
+            type: "line",
+            height: 300,
+            toolbar: {
+                show: true,
+                tools: {
+                    download: false,
+                    selection: false,
+                    zoom: false,
+                    zoomin: true,
+                    zoomout: true,
+                    pan: false,
+                    reset: false
+                }
             }
+        },
+        series: productos.map(p => ({
+            name: p.nombreCorto,
+            data: p.historialPrecios ? p.historialPrecios.map(h => h.precio || null) : []
+        })),
+        xaxis: {
+            categories: productos[0]?.historialPrecios ? productos[0].historialPrecios.map(h => h.fecha) : []
         }
-    },
-    series: productos.map(p => ({
-        name: p.nombreCorto,
-        data: p.historialPrecios.map(h => h.precio || null)
-    })),
-    xaxis: {
-        categories: productos[0].historialPrecios.map(h => h.fecha)
-    }
-};
-
+    };
 
     grafica = new ApexCharts(contenedor, opciones);
     grafica.render();
 }
 
-
-// ===============================
-// 4. INICIALIZAR E INTERFAZ
-// ===============================
-
+// INICIALIZAR MODAL Y VALIDAR CATEGORÍAS
 export function initCompareModal() {
     injectModalHTML();
 
@@ -140,14 +153,10 @@ export function initCompareModal() {
     const tablaContenedor = document.getElementById("comparativa-tabla-contenedor");
     const countLabel = document.getElementById("comparativa-count");
 
-    // Evento cerrar
     cerrar.addEventListener("click", () => {
         modal.style.display = "none";
-        // No destruimos la gráfica aquí para evitar parpadeos, 
-        // se destruye al abrir una nueva.
     });
 
-    // Cerrar al hacer clic fuera del contenido
     modal.addEventListener("click", (e) => {
         if (e.target === modal) modal.style.display = "none";
     });
@@ -156,17 +165,20 @@ export function initCompareModal() {
         abrir: (productos) => {
             if (!productos || productos.length === 0) return;
 
+            const primeraCategoria = productos[0].categoria;
+            const categoriasDiferentes = productos.some(p => p.categoria !== primeraCategoria);
+
+            if (categoriasDiferentes) {
+                mostrarNotificacion("Solo se pueden comparar componentes de la misma categoría.");
+                return;
+            }
+
             countLabel.textContent = `Comparando ${productos.length} producto(s)`;
             
-            // 1. Generar la tabla
             tablaContenedor.innerHTML = generarTabla(productos);
-
-            generarGraficaComparativa(productos);
 
             modal.style.display = "flex";
 
-            // 3. Generar la gráfica con ApexCharts
-            // Usamos un pequeño timeout para asegurar que el contenedor es visible
             setTimeout(() => {
                 generarGraficaComparativa(productos);
             }, 100);

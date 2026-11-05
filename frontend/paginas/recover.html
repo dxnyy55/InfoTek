@@ -1,121 +1,260 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Recuperar contraseña - InfoTek</title>
-    <link rel="stylesheet" href="../estilos/login.css">
-</head>
+    <head>
+        <meta charset="UTF-8">
+        <title>Recuperar contraseña - InfoTek</title>
+        <link rel="stylesheet" href="../estilos/login.css">
+        <style>
+            .input-password-container {
+                position: relative;
+                display: flex;
+                align-items: center;
+                width: 100%;
+            }
+            .input-password-container input {
+                width: 100%;
+                padding-right: 45px;
+            }
+            .toggle-eye {
+                position: absolute;
+                right: 12px;
+                background: none;
+                border: none;
+                cursor: pointer;
+                font-size: 18px;
+                padding: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: #666;
+            }
+            /* Animación del ventilador de CPU */
+            .btn:disabled {
+                opacity: 0.8;
+                cursor: not-allowed;
+                background-color: #2a2a80;
+            }
+            .cpu-fan-spinner {
+                display: inline-block;
+                width: 18px;
+                height: 18px;
+                margin-right: 8px;
+                vertical-align: middle;
+                animation: girarVentilador 0.8s linear infinite;
+            }
+            .cpu-fan-spinner::before {
+                content: "⚙️";
+                font-size: 16px;
+            }
+            @keyframes girarVentilador {
+                from { transform: rotate(0deg); }
+                to { transform: rotate(360deg); }
+            }
+        </style>
+    </head>
 
-<body class="fondo-login">
+    <body class="fondo-login">
 
-<div class="tarjeta-login">
+    <div class="tarjeta-login">
 
-    <img src="../recursos/imagenes/logo.png" alt="InfoTek">
-    <h1>Recuperar contraseña</h1>
+        <img src="../recursos/imagenes/logo.png" alt="InfoTek">
+        <h1>Recuperar contraseña</h1>
 
-    <!-- PASO 1 -->
-    <div id="paso1">
-        <p>Introduce tu email y te enviaremos un código de recuperación</p>
+        <!-- PASO 1 -->
+        <div id="paso1">
+            <p>Introduce tu email y te enviaremos un código de recuperación</p>
+            <input type="email" id="email" placeholder="tu@email.com" required>
+            <button class="btn" id="btn-enviar">
+                Enviar código
+            </button>
+        </div>
 
-        <input type="email" id="email" placeholder="tu@email.com" required>
+        <!-- PASO 2 -->
+        <div id="paso2" style="display:none;">
+            <p>Introduce el código que hemos enviado a tu correo</p>
+            <input type="text" id="codigo" placeholder="Código de 6 dígitos">
+            <button class="btn" id="btn-verificar">
+                Verificar código
+            </button>
+        </div>
 
-        <button class="btn" id="btn-enviar">
-            Enviar código
-        </button>
+        <!-- PASO 3 -->
+        <div id="paso3" style="display:none;">
+            <p>Introduce tu nueva contraseña</p>
+            <div class="input-password-container">
+                <input type="password" id="newPassword" placeholder="Nueva contraseña">
+                <button type="button" id="btnTogglePassword" class="toggle-eye" title="Mostrar contraseña">👁️</button>
+            </div>
+            <button class="btn" id="btn-cambiar" style="margin-top: 15px;">
+                Cambiar contraseña
+            </button>
+        </div>
+
     </div>
 
-    <!-- PASO 2 -->
-    <div id="paso2" style="display:none;">
-        <p>Introduce el código que hemos enviado</p>
+    <script>
+    function mostrarNotificacion(mensaje) {
+        const alertaExistente = document.getElementById("alerta-flotante-custom");
+        if (alertaExistente) alertaExistente.remove();
 
-        <input type="text" id="codigo" placeholder="Código">
+        const alerta = document.createElement("div");
+        alerta.id = "alerta-flotante-custom";
+        alerta.textContent = mensaje;
 
-        <button class="btn" id="btn-verificar">
-            Verificar código
-        </button>
-    </div>
-
-    <!-- PASO 3 -->
-    <div id="paso3" style="display:none;">
-        <p>Introduce tu nueva contraseña</p>
-
-        <input type="password" id="newPassword" placeholder="Nueva contraseña">
-
-        <button class="btn" id="btn-cambiar">
-            Cambiar contraseña
-        </button>
-    </div>
-
-</div>
-
-<script>
-let emailGuardado = "";
-
-// PASO 1
-document.getElementById("btn-enviar").addEventListener("click", () => {
-    const email = document.getElementById("email").value.trim();
-
-    if (!email) {
-        alert("Introduce un email");
-        return;
-    }
-
-    emailGuardado = email;
-
-    alert("Código enviado correctamente");
-
-    document.getElementById("paso1").style.display = "none";
-    document.getElementById("paso2").style.display = "block";
-});
-
-// PASO 2
-document.getElementById("btn-verificar").addEventListener("click", () => {
-    const codigo = document.getElementById("codigo").value.trim();
-
-    if (codigo === "1234") {
-        document.getElementById("paso2").style.display = "none";
-        document.getElementById("paso3").style.display = "block";
-    } else {
-        alert("Código incorrecto");
-    }
-});
-
-// PASO 3
-document.getElementById("btn-cambiar").addEventListener("click", async () => {
-    const newPassword = document.getElementById("newPassword").value.trim();
-
-    if (newPassword.length < 4) {
-        alert("La contraseña debe tener al menos 4 caracteres");
-        return;
-    }
-
-    try {
-
-        const res = await fetch("http://localhost:3000/api/auth/recover-password", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                email: emailGuardado,
-                newPassword
-            })
+        Object.assign(alerta.style, {
+            position: "fixed",
+            top: "20px",
+            left: "50%",
+            transform: "translateX(-50%)",
+            background: "#191970",
+            color: "#ffffff",
+            padding: "12px 24px",
+            borderRadius: "8px",
+            boxShadow: "0 4px 15px rgba(0,0,0,0.2)",
+            fontSize: "15px",
+            fontWeight: "600",
+            zIndex: "10000",
+            transition: "opacity 0.3s ease"
         });
 
-        const data = await res.json();
+        document.body.appendChild(alerta);
 
-        alert(data.message);
+        setTimeout(() => {
+            alerta.style.opacity = "0";
+            setTimeout(() => alerta.remove(), 300);
+        }, 3500);
+    }
 
-        if (res.ok) {
-            window.location.href = "login.html";
+    let emailGuardado = "";
+
+    // Toggle ojito contraseña
+    const btnTogglePassword = document.getElementById("btnTogglePassword");
+    const inputNewPassword = document.getElementById("newPassword");
+
+    btnTogglePassword.addEventListener("click", () => {
+        if (inputNewPassword.type === "password") {
+            inputNewPassword.type = "text";
+            btnTogglePassword.textContent = "🙈";
+        } else {
+            inputNewPassword.type = "password";
+            btnTogglePassword.textContent = "👁️";
+        }
+    });
+
+    // PASO 1: Enviar código
+    const btnEnviar = document.getElementById("btn-enviar");
+    btnEnviar.addEventListener("click", async () => {
+        const email = document.getElementById("email").value.trim();
+        if (!email) {
+            mostrarNotificacion("⚠️ Introduce un correo electrónico");
+            return;
         }
 
-    } catch (error) {
-        console.error(error);
-        alert("Error al conectar con el servidor");
-    }
-});
-</script>
+        btnEnviar.disabled = true;
+        const textoOriginal = btnEnviar.innerHTML;
+        btnEnviar.innerHTML = `<span class="cpu-fan-spinner"></span> Enviando...`;
 
-</body>
+        try {
+            const res = await fetch("http://localhost:3000/api/auth/enviar-codigo", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email })
+            });
+
+            const data = await res.json();
+
+            if (res.ok) {
+                emailGuardado = email;
+                mostrarNotificacion("✉️ Código enviado correctamente al correo.");
+                document.getElementById("paso1").style.display = "none";
+                document.getElementById("paso2").style.display = "block";
+            } else {
+                mostrarNotificacion("⚠️ " + (data.message || "No se pudo enviar el código."));
+            }
+        } catch (error) {
+            console.error(error);
+            mostrarNotificacion("❌ Error al conectar con el servidor");
+        } finally {
+            btnEnviar.disabled = false;
+            btnEnviar.innerHTML = textoOriginal;
+        }
+    });
+
+    // PASO 2: Verificar código
+    const btnVerificar = document.getElementById("btn-verificar");
+    btnVerificar.addEventListener("click", async () => {
+        const codigo = document.getElementById("codigo").value.trim();
+        if (!codigo) {
+            mostrarNotificacion("⚠️ Introduce el código de verificación");
+            return;
+        }
+
+        btnVerificar.disabled = true;
+        const textoOriginal = btnVerificar.innerHTML;
+        btnVerificar.innerHTML = `<span class="cpu-fan-spinner"></span> Verificando...`;
+
+        try {
+            const res = await fetch("http://localhost:3000/api/auth/verificar-codigo", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email: emailGuardado, codigo })
+            });
+
+            const data = await res.json();
+
+            if (res.ok) {
+                mostrarNotificacion("✔️ Código verificado con éxito.");
+                document.getElementById("paso2").style.display = "none";
+                document.getElementById("paso3").style.display = "block";
+            } else {
+                mostrarNotificacion("⚠️ " + (data.message || "Código incorrecto"));
+            }
+        } catch (error) {
+            console.error(error);
+            mostrarNotificacion("❌ Error al verificar el código");
+        } finally {
+            btnVerificar.disabled = false;
+            btnVerificar.innerHTML = textoOriginal;
+        }
+    });
+
+    // PASO 3: Cambiar contraseña
+    const btnCambiar = document.getElementById("btn-cambiar");
+    btnCambiar.addEventListener("click", async () => {
+        const newPassword = document.getElementById("newPassword").value.trim();
+        if (newPassword.length < 4) {
+            mostrarNotificacion("⚠️ La contraseña debe tener al menos 4 caracteres");
+            return;
+        }
+
+        btnCambiar.disabled = true;
+        const textoOriginal = btnCambiar.innerHTML;
+        btnCambiar.innerHTML = `<span class="cpu-fan-spinner"></span> Actualizando...`;
+
+        try {
+            const res = await fetch("http://localhost:3000/api/auth/recover-password", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email: emailGuardado, newPassword })
+            });
+
+            const data = await res.json();
+            mostrarNotificacion(data.message || "Contraseña actualizada con éxito");
+
+            if (res.ok) {
+                setTimeout(() => {
+                    window.location.href = "login.html";
+                }, 2000);
+            }
+        } catch (error) {
+            console.error(error);
+            mostrarNotificacion("❌ Error al conectar con el servidor");
+        } finally {
+            btnCambiar.disabled = false;
+            btnCambiar.innerHTML = textoOriginal;
+        }
+    });
+    </script>
+
+    </body>
 </html>

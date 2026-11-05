@@ -1,11 +1,29 @@
-/* --- HEADER --- */
 .header {
     background-color: #0a0a23;
     padding: 15px 0;
 }
 
+.header-logo h1 {
+    font-size: 1.8rem;
+    font-weight: 800;
+    margin: 0;
+    color: white;
+    line-height: 1;
+}
 
-.logo-texto { color: white; font-size: 24px; font-weight: bold; text-decoration: none; }
+.header-logo img {
+    width: 45px;
+    height: 45px;
+    object-fit: contain;
+}
+
+.header-logo h1 {
+    font-size: 1.8rem;
+    font-weight: 800;
+    margin: 0;
+    color: white;
+    line-height: 1;
+}
 
 .buscador {
     width: 500px;
@@ -16,7 +34,6 @@
 
 .header-usuario { display: flex; align-items: center; gap: 25px; }
 
-/* ICONOS BLANCOS */
 .btn-icon {
     background: none;
     border: none;
@@ -31,9 +48,8 @@
 .carrito-contenedor { display: flex; align-items: center; gap: 8px; }
 .carrito-numero { color: white; font-size: 16px; font-weight: bold; }
 
-/* --- CUERPO Y GRID --- */
 .contenedor-principal-cuenta {
-    background: linear-gradient(135deg, #00ffaa 0%, #007755 100%);
+    background: linear-gradient(135deg, #ffffff 0%, #000000 100%);
     min-height: 100vh;
     padding-bottom: 50px;
     transition: background 0.3s ease;
@@ -63,7 +79,6 @@
 .tarjeta-sm { min-height: 220px; }
 .tarjeta-full { grid-column: span 2; min-height: auto; }
 
-/* SELECTOR DE COLOR LARGO */
 .control-color { display: flex; align-items: center; gap: 15px; width: 100%; }
 .input-color-largo { 
     flex-grow: 1; 
@@ -73,12 +88,64 @@
     cursor: pointer; 
 }
 
-/* BOTONES */
 .pie-tarjeta { display: flex; gap: 15px; margin-top: 20px; }
-.btn-accion { padding: 12px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; flex: 1; }
+
+.btn-accion { 
+    padding: 12px; 
+    border-radius: 8px; 
+    border: none; 
+    font-weight: bold; 
+    cursor: pointer; 
+    flex: 1; 
+}
+
 .primario, .secundario { background: #191970; color: white; }
 .secundario { flex: 3; }
 .peligro { background: #ff4757; color: white; }
+
+button, .btn-accion {
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease, opacity 0.2s ease;
+}
+
+button:hover, .btn-accion:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+button:active, .btn-accion:active {
+    transform: scale(0.97);
+}
+
+#cerrar-sesion:hover {
+    background-color: #ff3344 !important;
+}
+
+#guardar-color {
+    background-color: #191970;
+    color: #ffffff;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+#guardar-color:hover {
+    background-color: #1a4a73;
+}
+
+#guardar-color:active {
+    transform: scale(0.97);
+}
+
+#guardar-color.guardado {
+    background-color: #00b347 !important;
+}
+
+#restablecer-color:hover {
+    background-color: #e2e8f0;
+}
 
 @media (max-width: 850px) {
     .layout-grid-cuenta { grid-template-columns: 1fr; }

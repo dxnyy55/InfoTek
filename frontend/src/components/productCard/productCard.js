@@ -1,7 +1,3 @@
-// ==========================================================================
-// COMPONENTE: PRODUCT CARD (RESTAURADO Y SEGURO)
-// ==========================================================================
-
 /**
  * Función auxiliar interna para actualizar el contador flotante del header
  * de forma nativa si existe en la página actual.
@@ -21,9 +17,9 @@ function refrescarContadorLocal() {
     }
 }
 
-// ===============================
+
 // ANIMACIÓN: PRODUCTO VUELA AL CARRITO
-// ===============================
+
 export function animarProductoAlCarrito(imagenSrc, origenX, origenY) {
     const carritoIcon = document.getElementById("btn-carrito-nav");
     if (!carritoIcon) return;
@@ -47,9 +43,8 @@ export function animarProductoAlCarrito(imagenSrc, origenX, origenY) {
     setTimeout(() => img.remove(), 900);
 }
 
-// ===============================
 // CREAR CARD DE PRODUCTO
-// ===============================
+
 export function createProductCard(producto, onVer, onCarrito, onComparar, onFavorito, esFavorito = false) {
     const card = document.createElement("div");
     card.classList.add("producto-card");
@@ -72,11 +67,11 @@ export function createProductCard(producto, onVer, onCarrito, onComparar, onFavo
 
         <div class="botones-producto">
             <button class="btn-favorito ${esFavorito ? "activo" : ""}">
-                <img src="/Info_Tek/frontend/recursos/imagenes/corazon.png" alt="Favorito">
+                <img src="../recursos/imagenes/corazon.png" alt="Favorito">
             </button>
 
             <button class="btn-comparar">
-                <img src="/Info_Tek/frontend/recursos/imagenes/comparar.png" alt="Comparar">
+                <img src="../recursos/imagenes/comparar.png" alt="Comparar">
             </button>
         </div>
     `;
@@ -121,14 +116,14 @@ export function ejecutarLogicaAñadirCarrito(producto, evento = null) {
 
     localStorage.setItem("carrito", JSON.stringify(carrito));
 
-    // 🔥 Refresca el contador del header nativo al instante (Productos Únicos)
+    // Refresca el contador del header nativo al instante
     refrescarContadorLocal();
 
     // Disparar animación de vuelo si se proporciona el evento de clic
     if (evento) {
         const targetCard = evento.target.closest('.producto-card') || document;
         const imgElement = targetCard.querySelector('.producto-img');
-        const imgSrc = imgElement ? imgElement.src : "/Info_Tek/frontend/recursos/imagenes/default.jpg";
+        const imgSrc = imgElement ? imgElement.src : "../recursos/imagenes/default.jpg";
         animarProductoAlCarrito(imgSrc, evento.clientX, evento.clientY);
     }
 }

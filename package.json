@@ -10,6 +10,7 @@
     "express": "^5.2.1",
     "mongodb": "^7.1.0",
     "mongoose": "^9.2.1",
-    "mongose": "^0.0.2-security"
+    "mongose": "^0.0.2-security",
+    "nodemailer": "^10.3.1"
   }
 }

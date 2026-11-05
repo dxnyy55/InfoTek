@@ -38,6 +38,23 @@ async function connexionMongoDB() {
   try {
     await mongoose.connect(uri);
     console.log("✅ MongoDB conectado");
+
+    // ==========================================
+    // SISTEMA KEEP-ALIVE (Mantiene la BD despierta)
+    // ==========================================
+    // Realiza un ping cada 5 minutos (300,000 ms) para evitar la suspensión por inactividad
+    const INTERVALO_TIEMPO = 5 * 60 * 1000; 
+
+    setInterval(async () => {
+      try {
+        await mongoose.connection.db.admin().ping();
+        console.log("🔄 Ping automático a MongoDB para mantener la sesión activa.");
+      } catch (error) {
+        console.error("❌ Error en el ping de mantenimiento a la BD:", error);
+      }
+    }, INTERVALO_TIEMPO);
+    // ==========================================
+
   } catch (err) {
     console.error(err);
   }

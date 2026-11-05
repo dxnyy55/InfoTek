@@ -1,15 +1,14 @@
-// ===============================
 // USUARIO (Global)
-// ===============================
+
 const user = JSON.parse(localStorage.getItem("user"));
 
 if (!user) {
     window.location.href = "login.html";
 }
 
-// ===============================
+
 // MOSTRAR DATOS PERSONALIZADOS
-// ===============================
+
 const saludo = document.getElementById("saludo-usuario");
 if (saludo && user) {
     saludo.textContent = "Hola, " + (user.name || "Usuario");
@@ -38,9 +37,9 @@ if (saludo && user) {
     }
 }
 
-// ===============================
+
 // INFO DE LA CUENTA
-// ===============================
+
 if (document.getElementById("username")) {
     document.getElementById("username").textContent = user.name;
     document.getElementById("user-id").textContent = user.id || user._id;
@@ -51,9 +50,9 @@ if (document.getElementById("username")) {
     }
 }
 
-// ===============================
+
 // LÓGICA DE ACTUALIZACIÓN (EDITAR)
-// ===============================
+
 const btnEditar = document.getElementById("btn-editar");
 if (btnEditar) {
     btnEditar.addEventListener("click", async () => {
@@ -86,7 +85,6 @@ if (btnEditar) {
 
             const data = await res.json();
             if (res.ok) {
-                // CORRECCIÓN: Actualizamos manualmente el objeto local para evitar que los datos desaparezcan
                 const userActualizado = { ...user, name: nombre, apellido: apellido, sexo: sexo, nacimiento: nacimientoISO };
                 localStorage.setItem("user", JSON.stringify(userActualizado));
                 alert("Información actualizada correctamente");
@@ -101,9 +99,9 @@ if (btnEditar) {
     });
 }
 
-// ===============================
+
 // BOTÓN FAVORITOS (REDIRECCIÓN)
-// ===============================
+
 const btnFavoritos = document.getElementById("btn-favoritos");
 if (btnFavoritos) {
     btnFavoritos.addEventListener("click", () => {
@@ -111,9 +109,9 @@ if (btnFavoritos) {
     });
 }
 
-// ===============================
+
 // CERRAR SESIÓN
-// ===============================
+
 const btnLogout = document.getElementById("cerrar-sesion");
 if (btnLogout) {
     btnLogout.addEventListener("click", () => {
@@ -122,24 +120,28 @@ if (btnLogout) {
     });
 }
 
-// ===============================
-// COLOR DE FONDO (AJUSTES TEMAS)
-// ===============================
+
+// COLOR DE FONDO
+
 const selectorCuenta = document.getElementById("selector-color-cuenta");
 const btnGuardarColor = document.getElementById("guardar-color");
 const btnRestablecer = document.getElementById("restablecer-color");
 const contenedorFondo = document.querySelector(".contenedor-principal-cuenta");
+
+const DEGRADADO_DEFAULT = "linear-gradient(135deg, #ffffff 0%, #000000 100%)";
 
 function aplicarColor(color) {
     if (!contenedorFondo) return;
     contenedorFondo.style.background = color;
 }
 
-// Cargar preferencia guardada
+// Cargar preferencia guardada o aplicar degradado por defecto (Blanco a Negro)
 const colorGuardado = localStorage.getItem("colorFondo");
 if (colorGuardado) {
     if (selectorCuenta) selectorCuenta.value = colorGuardado;
     aplicarColor(colorGuardado);
+} else {
+    aplicarColor(DEGRADADO_DEFAULT);
 }
 
 // Vista previa en tiempo real
@@ -149,29 +151,27 @@ if (selectorCuenta) {
     });
 }
 
-// Guardar color
+// Guardar color (Sin alertas molestas)
 if (btnGuardarColor) {
     btnGuardarColor.addEventListener("click", () => {
         const nuevoColor = selectorCuenta.value;
         localStorage.setItem("colorFondo", nuevoColor);
-        alert("Preferencia de color guardada.");
+        // Se ha eliminado el alert() para una experiencia de usuario fluida
     });
 }
 
-// Restablecer a degradado original
+// Restablecer a degradado original (Blanco a Negro)
 if (btnRestablecer) {
     btnRestablecer.addEventListener("click", () => {
         localStorage.removeItem("colorFondo");
-        if (contenedorFondo) {
-            contenedorFondo.style.background = "linear-gradient(135deg, #00ffaa 0%, #007755 100%)";
-        }
-        if (selectorCuenta) selectorCuenta.value = "#00ffaa";
+        aplicarColor(DEGRADADO_DEFAULT);
+        if (selectorCuenta) selectorCuenta.value = "#ffffff";
     });
 }
 
-// =========================================================
-// SISTEMA DE PEDIDOS SIMULADOS POR USUARIO (CONTROL MULTICUENTA)
-// =========================================================
+// SISTEMA DE PEDIDOS SIMULADOS POR USUARIO
+
+
 const contenedorPedidos = document.getElementById("contenedor-pedidos");
 const currentUserId = user.id || user._id;
 const currentUserEmail = user.email ? user.email.toLowerCase() : "";
@@ -180,18 +180,17 @@ const modalDinamico = document.getElementById("contenido-dinamico-modal");
 let tipoPedidoActivo = null;
 
 if (contenedorPedidos) {
-    // CASO 1: TU USUARIO (SEBAS) -> PEDIDO ENTREGADO
     if (currentUserId === "69b1bff4c4a6d6159fc21827" || currentUserEmail === "sebas@gmail.com") {
         tipoPedidoActivo = "entregado";
         contenedorPedidos.innerHTML = `
             <div class="pedido-item" style="display: flex; gap: 10px; flex-direction: column; border-top: 1px solid rgba(0,0,0,0.08); padding-top: 12px; margin-top: 5px;">
                 <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
                     <span style="font-size: 11px; color: #777; font-weight: bold;">Ref: TK-2026-8891</span>
-                    <span style="background: #e6f9ed; color: #00b347; padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: bold;">Entregado</span>
+                    <span style="background: #e6f9ed; color: #000000; padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: bold;">Entregado</span>
                 </div>
                 <p style="margin: 0; font-size: 13px; font-weight: 500; color: #333; line-height: 1.3;">Procesador AMD Ryzen 7 5800X3D</p>
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 2px;">
-                    <span style="font-size: 13px; color: #00b347; font-weight: 700;">399.99 €</span>
+                    <span style="font-size: 13px; color: #000000; font-weight: 700;">399.99 €</span>
                     <span style="font-size: 11px; color: #999;">20/05/2026</span>
                 </div>
                 <button id="btn-ver-localizador" style="margin-top: 8px; width: 100%; padding: 6px; background: #113554; color: white; border: none; border-radius: 4px; font-size: 12px; font-weight: bold; cursor: pointer; transition: background 0.2s;">
@@ -200,7 +199,6 @@ if (contenedorPedidos) {
             </div>
         `;
     } 
-    // CASO 2: SEGUNDO USUARIO (SEBASTIAN) -> PEDIDO EN CAMINO (CORREGIDO ID Y EMAIL)
     else if (currentUserId === "69b1c31ccca4ee5e459fac79" || currentUserEmail === "sebastian@gmail.com") {
         tipoPedidoActivo = "en-camino";
         contenedorPedidos.innerHTML = `
@@ -220,7 +218,6 @@ if (contenedorPedidos) {
             </div>
         `;
     } 
-    // OTROS USUARIOS (VACÍO)
     else {
         contenedorPedidos.innerHTML = `<p>No tienes pedidos recientes.</p>`;
     }

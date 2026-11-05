@@ -1,87 +1,200 @@
 import express from "express";
+import nodemailer from "nodemailer";
 import bcrypt from "bcryptjs";
-import User from "../models/User.js";
+import Usuario from "../models/User.js";
 
 const router = express.Router();
 
-// ===============================
-// RUTAS ORIGINALES
-// ===============================
-router.post("/register", async (req, res) => {
-  try {
-    const { name, email, password } = req.body;
-    if (!name || !email || !password) return res.status(400).json({ message: "Faltan datos" });
-    const userExists = await User.findOne({ email });
-    if (userExists) return res.status(400).json({ message: "El usuario ya existe" });
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
-    const newUser = new User({ name, email, password: hashedPassword });
-    await newUser.save();
-    res.status(201).json({ message: "Usuario registrado correctamente" });
-  } catch (error) { res.status(500).json({ message: "Error en el servidor" }); }
-});
-
-router.post("/login", async (req, res) => {
-  try {
-    const { email, password } = req.body;
-    const user = await User.findOne({ email });
-    if (!user) return res.status(400).json({ message: "Usuario no encontrado" });
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) return res.status(400).json({ message: "Contraseña incorrecta" });
-    res.json({ message: "Login exitoso", user: { id: user._id, name: user.name, apellido: user.apellido, sexo: user.sexo, nacimiento: user.nacimiento, email: user.email, createdAt: user.createdAt } });
-  } catch (error) { res.status(500).json({ message: "Error en el servidor" }); }
-});
-
-router.post("/recover-password", async (req, res) => {
-  try {
-    const { email, newPassword } = req.body;
-    const user = await User.findOne({ email });
-    if (!user) return res.status(400).json({ message: "Usuario no encontrado" });
-    const salt = await bcrypt.genSalt(10);
-    user.password = await bcrypt.hash(newPassword, salt);
-    await user.save();
-    res.json({ message: "Contraseña actualizada correctamente" });
-  } catch (error) { res.status(500).json({ message: "Error en el servidor" }); }
-});
-
-router.put("/update-user/:id", async (req, res) => {
-  try {
-    const { name, email, password, apellido, sexo, nacimiento } = req.body;
-    const updateData = { name, email, apellido, sexo, nacimiento };
-    if (password) {
-      const salt = await bcrypt.genSalt(10);
-      updateData.password = await bcrypt.hash(password, salt);
+// Configurar Nodemailer con la cuenta oficial de InfoTek
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: 'infotek.oficial@gmail.com',         
+        pass: 'okyx sskp gjqw ttyv' 
     }
-    const user = await User.findByIdAndUpdate(req.params.id, updateData, { new: true });
-    res.json({ message: "Usuario actualizado", user });
-  } catch (error) { res.status(500).json({ message: "Error al actualizar" }); }
 });
 
-// ===============================
-// GUARDAR DATOS (PAGO Y ENVÍO)
-// ===============================
-router.put("/update-payment/:id", async (req, res) => {
-  try {
-    const { payCard, cardHolder, expiry } = req.body;
-    const user = await User.findByIdAndUpdate(req.params.id, { billingInfo: { payCard, cardHolder, cvCard: "", expiry } }, { new: true });
-    res.json({ message: "Datos guardados", user });
-  } catch (error) { res.status(500).json({ message: "Error" }); }
+// Almacén temporal de códigos (en memoria)
+const codigosRecuperacion = {};
+
+// ------------------------------------------
+// 0. Registro de usuarios (Con cifrado explícito)
+// ------------------------------------------
+router.post('/registro', async (req, res) => {
+    const { nombre, email, password } = req.body;
+    const emailLimpiado = email ? email.trim() : "";
+
+    try {
+        const existeUsuario = await Usuario.findOne({ 
+            mailAdress: { $regex: new RegExp(`^${emailLimpiado}$`, 'i') } 
+        });
+
+        if (existeUsuario) {
+            return res.status(400).json({ message: "El correo electrónico ya está registrado." });
+        }
+
+        // Ciframos la contraseña con bcrypt antes de crear el usuario
+        const salt = await bcrypt.genSalt(10);
+        const passwordHash = await bcrypt.hash(password, salt);
+
+        const nuevoUsuario = new Usuario({
+            username: nombre,
+            mailAdress: emailLimpiado,
+            password: passwordHash
+        });
+
+        await nuevoUsuario.save();
+        res.status(201).json({ message: "Usuario registrado con éxito." });
+
+    } catch (error) {
+        console.error("Error en el registro:", error);
+        res.status(500).json({ message: "Error interno al registrar el usuario." });
+    }
 });
 
-router.put("/update-shipping/:id", async (req, res) => {
-  try {
-    const { nombre, apellidos, movil, direccion, cp, poblacion, provincia } = req.body;
-    const user = await User.findByIdAndUpdate(req.params.id, { shippingInfo: { nombre, apellidos, movil, direccion, cp, poblacion, provincia } }, { new: true });
-    res.json({ message: "Dirección guardada", user });
-  } catch (error) { res.status(500).json({ message: "Error al guardar dirección" }); }
+// ------------------------------------------
+// 0.1. Inicio de sesión (Login seguro)
+// ------------------------------------------
+router.post('/login', async (req, res) => {
+    const email = req.body.email ? req.body.email.trim() : "";
+    const { password } = req.body;
+
+    console.log("--- INTENTO DE LOGIN ---");
+    console.log("Email recibido:", email);
+    console.log("Password recibido (plano):", password);
+
+    try {
+        const usuario = await Usuario.findOne({ 
+            mailAdress: { $regex: new RegExp(`^${email}$`, 'i') } 
+        });
+
+        if (!usuario) {
+            console.log("❌ Usuario no encontrado en la base de datos.");
+            return res.status(401).json({ message: "Correo o contraseña incorrectos." });
+        }
+
+        console.log("✔️ Usuario encontrado:", usuario.mailAdress);
+        console.log("Hash en BD:", usuario.password);
+
+        const esPasswordCorrecta = await bcrypt.compare(password, usuario.password);
+        console.log("¿Coincide la contraseña?", esPasswordCorrecta);
+
+        if (!esPasswordCorrecta) {
+            console.log("❌ La contraseña no coincide con el hash.");
+            return res.status(401).json({ message: "Correo o contraseña incorrectos." });
+        }
+
+        console.log("✔️ ¡Login exitoso!");
+        res.status(200).json({ 
+            message: "Inicio de sesión exitoso", 
+            usuario: { nombre: usuario.username || usuario.name, email: usuario.mailAdress } 
+        });
+
+    } catch (error) {
+        console.error("Error en el login:", error);
+        res.status(500).json({ message: "Error interno del servidor." });
+    }
 });
 
-router.get("/get-user-data/:id", async (req, res) => {
-  try {
-    const user = await User.findById(req.params.id);
-    if (!user) return res.status(404).json({ message: "Usuario no encontrado" });
-    res.json(user);
-  } catch (error) { res.status(500).json({ message: "Error al obtener datos" }); }
+// ------------------------------------------
+// 1. Enviar código de 6 dígitos por email
+// ------------------------------------------
+router.post('/enviar-codigo', async (req, res) => {
+    const email = req.body.email ? req.body.email.trim() : "";
+
+    try {
+        const usuario = await Usuario.findOne({ 
+            mailAdress: { $regex: new RegExp(`^${email}$`, 'i') } 
+        });
+
+        if (!usuario) {
+            return res.status(404).json({ message: "El correo electrónico no está registrado." });
+        }
+
+        const codigo = Math.floor(100000 + Math.random() * 900000).toString();
+
+        codigosRecuperacion[email] = {
+            codigo: codigo,
+            expira: Date.now() + 10 * 60 * 1000 // 10 minutos de validez
+        };
+
+        const mailOptions = {
+            from: '"InfoTek Soporte" <infotek.oficial@gmail.com>',
+            to: email,
+            subject: 'Código de recuperación de contraseña - InfoTek',
+            html: `
+                <div style="font-family: Arial, sans-serif; color: #191970; padding: 20px;">
+                    <h2>Recuperación de Contraseña</h2>
+                    <p>Has solicitado restablecer tu contraseña en <strong>InfoTek</strong>.</p>
+                    <p>Tu código de verificación es:</p>
+                    <h1 style="background: #f0f0f5; padding: 10px; display: inline-block; letter-spacing: 5px;">${codigo}</h1>
+                    <p>Este código caduca en 10 minutos.</p>
+                </div>
+            `
+        };
+
+        await transporter.sendMail(mailOptions);
+        res.status(200).json({ message: "Código enviado con éxito." });
+
+    } catch (error) {
+        console.error("Error al enviar correo:", error);
+        res.status(500).json({ message: "Error interno al enviar el correo." });
+    }
+});
+
+// ------------------------------------------
+// 2. Verificar el código introducido
+// ------------------------------------------
+router.post('/verificar-codigo', (req, res) => {
+    const { email, codigo } = req.body;
+    const registro = codigosRecuperacion[email];
+
+    if (!registro) {
+        return res.status(400).json({ message: "No hay ninguna solicitud activa para este correo." });
+    }
+
+    if (Date.now() > registro.expira) {
+        delete codigosRecuperacion[email];
+        return res.status(400).json({ message: "El código ha expirado." });
+    }
+
+    if (registro.codigo !== codigo) {
+        return res.status(400).json({ message: "Código incorrecto." });
+    }
+
+    res.status(200).json({ message: "Código verificado correctamente." });
+});
+
+// ------------------------------------------
+// 3. Cambiar la contraseña definitivamente (Con cifrado bcrypt)
+// ------------------------------------------
+router.post('/recover-password', async (req, res) => {
+    const email = req.body.email ? req.body.email.trim() : "";
+    const { newPassword } = req.body;
+
+    try {
+        const usuario = await Usuario.findOne({ 
+            mailAdress: { $regex: new RegExp(`^${email}$`, 'i') } 
+        });
+
+        if (!usuario) {
+            return res.status(404).json({ message: "Usuario no encontrado." });
+        }
+
+        // Ciframos la nueva contraseña obligatoriamente con bcrypt
+        const salt = await bcrypt.genSalt(10);
+        usuario.password = await bcrypt.hash(newPassword, salt);
+        
+        await usuario.save();
+
+        delete codigosRecuperacion[email];
+
+        res.status(200).json({ message: "Contraseña actualizada con éxito." });
+
+    } catch (error) {
+        console.error("Error al actualizar contraseña:", error);
+        res.status(500).json({ message: "Error al actualizar la contraseña." });
+    }
 });
 
 export default router;

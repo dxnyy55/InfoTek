@@ -9,19 +9,47 @@ const btnCompararFinal = document.getElementById("btn-comparar-final");
 const btnCuenta = document.getElementById("btn-cuenta");
 const compareModal = initCompareModal();
 
-
 let seleccionados = [];
-
 let productosOriginales = [];
 let productosFiltrados = [];
 
-// ===============================
-// MOSTRAR PRODUCTOS (🔥 MODIFICADO ASÍNCROLO PARA CORAZÓN ROJO)
-// ===============================
+// NOTIFICACIÓN FLOTANTE ELEGANTE
+function mostrarNotificacion(mensaje) {
+    const alertaExistente = document.getElementById("alerta-flotante-custom");
+    if (alertaExistente) alertaExistente.remove();
+
+    const alerta = document.createElement("div");
+    alerta.id = "alerta-flotante-custom";
+    alerta.textContent = mensaje;
+
+    Object.assign(alerta.style, {
+        position: "fixed",
+        top: "20px",
+        left: "50%",
+        transform: "translateX(-50%)",
+        background: "#191970",
+        color: "#ffffff",
+        padding: "12px 24px",
+        borderRadius: "8px",
+        boxShadow: "0 4px 15px rgba(0,0,0,0.2)",
+        fontSize: "15px",
+        fontWeight: "600",
+        zIndex: "10000",
+        transition: "opacity 0.3s ease"
+    });
+
+    document.body.appendChild(alerta);
+
+    setTimeout(() => {
+        alerta.style.opacity = "0";
+        setTimeout(() => alerta.remove(), 300);
+    }, 3500);
+}
+
+// MOSTRAR PRODUCTOS
 async function renderizarProductos(lista) {
     contenedor.innerHTML = "";
 
-    // 1. Obtener favoritos desde el backend antes de pintar
     const usuario = JSON.parse(localStorage.getItem("user"));
     let idsFavoritos = [];
     
@@ -39,7 +67,6 @@ async function renderizarProductos(lista) {
         }
     }
 
-    // 2. Renderizar pasando el estado 'esFav' a la tarjeta
     lista.forEach(p => {
         const esFav = idsFavoritos.includes(p._id);
 
@@ -49,7 +76,7 @@ async function renderizarProductos(lista) {
             añadirCarrito,
             toggleComparar,
             toggleFavorito,
-            esFav // <-- Enviamos el estado dinámico (true/false)
+            esFav
         );
         contenedor.appendChild(card);
     });
@@ -57,9 +84,7 @@ async function renderizarProductos(lista) {
     if (contador) contador.textContent = `${lista.length} productos`;
 }
 
-// ===============================
 // ACTIVAR FILTROS
-// ===============================
 function activarFiltros() {
     const buscador = document.getElementById("filtro-texto");
     const precioMin = document.getElementById("precio-min");
@@ -67,6 +92,7 @@ function activarFiltros() {
     const checkboxes = document.querySelectorAll(".filtro-categoria, .filtro-marca");
 
     const actualizar = () => {
+        // Al filtrar, respetamos estrictamente el orden original de la base de datos
         productosFiltrados = aplicarFiltros(productosOriginales);
         renderizarProductos(productosFiltrados);
     };
@@ -79,32 +105,19 @@ function activarFiltros() {
     const btnLimpiar = document.getElementById("btn-limpiar-filtros");
     if (btnLimpiar) {
         btnLimpiar.addEventListener("click", () => {
-            buscador.value = "";
-            precioMin.value = "";
-            precioMax.value = "";
+            if (buscador) buscador.value = "";
+            if (precioMin) precioMin.value = "";
+            if (precioMax) precioMax.value = "";
             checkboxes.forEach(cb => cb.checked = false);
 
+            // Al limpiar filtros, restauramos la lista exactamente con el orden original del backend
             productosFiltrados = [...productosOriginales];
             renderizarProductos(productosFiltrados);
         });
     }
 }
 
-
-// ===============================
-// TOAST
-// ===============================
-/*function mostrarToast(mensaje) {
-    const toast = document.getElementById("toast");
-    toast.innerHTML = mensaje;
-    toast.classList.add("show");
-
-    setTimeout(() => toast.classList.remove("show"), 2500);
-}*/
-
-// ===============================
 // CONTADOR DEL CARRITO
-// ===============================
 function actualizarContadorCarrito() {
     const span = document.getElementById("carrito-count");
     const carrito = JSON.parse(localStorage.getItem("carrito")) || [];
@@ -112,9 +125,7 @@ function actualizarContadorCarrito() {
     if (span) span.textContent = total;
 }
 
-// ===============================
 // AÑADIR AL CARRITO (REAL)
-// ===============================
 function añadirCarrito(producto, boton, event) {
     let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
 
@@ -135,7 +146,6 @@ function añadirCarrito(producto, boton, event) {
     localStorage.setItem("carrito", JSON.stringify(carrito));
     actualizarContadorCarrito();
 
-    // Animación desde la card
     const cardImg = event.target.closest(".producto-card").querySelector(".producto-img");
     const rect = cardImg.getBoundingClientRect();
 
@@ -144,40 +154,26 @@ function añadirCarrito(producto, boton, event) {
         rect.left,
         rect.top
     );
-
-    // Toast
-  /* mostrarToast(`
-        ✔ Producto añadido al carrito<br>
-        <a href="carrito.html" style="color:#ffd700; text-decoration:underline;">Ir al carrito</a>
-    `);*/
 }
 
-// ===============================
-// CARGAR PRODUCTOS (🔥 CORREGIDO EL FLUJO INICIAL)
-// ===============================
+// CARGAR PRODUCTOS DESDE EL BACKEND
 fetch("http://localhost:3000/api/productos")
     .then(res => res.json())
     .then(data => {
-        productosOriginales = data;   // ← ← ← IMPORTANTE
+        // Guardamos los productos exactamente en el orden que manda el backend (.sort(_id: 1))
+        productosOriginales = data; 
         productosFiltrados = [...data];
         window.productos = data;
 
-        // 🔥 CORRECCIÓN: Quitamos mostrarProductos(productos) para evitar el doble pintado en gris
         renderizarProductos(productosFiltrados);
         activarFiltros();
     })
     .catch(err => console.error("Error cargando productos:", err));
 
-// ===============================
-// MOSTRAR PRODUCTOS (🔥 SE ENLAZA DIRECTAMENTE PARA NO ROMPER A TUS COMPAÑEROS)
-// ===============================
 function mostrarProductos(lista) {
     renderizarProductos(lista);
 }
 
-// ===============================
-// FILTRO POR CATEGORÍAS
-// ===============================
 botonesCategorias.forEach(btn => {
     btn.addEventListener("click", () => {
         botonesCategorias.forEach(b => b.classList.remove("activo"));
@@ -185,14 +181,12 @@ botonesCategorias.forEach(btn => {
     });
 });
 
-// ===============================
-// FAVORITOS (🔥 SE MANTIENE TU FUNCIÓN CORREGIDA)
-// ===============================
+// FAVORITOS
 function toggleFavorito(producto, boton) {
     const usuario = JSON.parse(localStorage.getItem("user"));
 
     if (!usuario) {
-        alert("Debes iniciar sesión");
+        mostrarNotificacion("⚠️ Debes iniciar sesión");
         return;
     }
 
@@ -203,7 +197,6 @@ function toggleFavorito(producto, boton) {
     };
 
     if (!activo) {
-        // AGREGAR A FAVORITOS
         fetch("http://localhost:3000/api/favoritos", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -213,9 +206,7 @@ function toggleFavorito(producto, boton) {
             if(res.ok) boton.classList.add("activo");
         })
         .catch(err => console.error("Error al guardar favorito:", err));
-
     } else {
-        // ELIMINAR DE FAVORITOS
         fetch("http://localhost:3000/api/favoritos", {
             method: "DELETE",
             headers: { "Content-Type": "application/json" },
@@ -228,11 +219,8 @@ function toggleFavorito(producto, boton) {
     }
 }
 
-// ===============================
-// COMPARAR (SIN CAMBIOS)
-// ===============================
+// COMPARAR
 function toggleComparar(id, boton) {
-
     const producto = productosOriginales.find(p => p._id === id);
 
     if (seleccionados.length === 0) {
@@ -242,7 +230,7 @@ function toggleComparar(id, boton) {
     }
 
     if (producto.categoria !== seleccionados[0].categoria) {
-        alert("Solo puedes comparar productos de la misma categoría");
+        mostrarNotificacion("⚠️ Solo puedes comparar productos de la misma categoría");
         return;
     }
 
@@ -259,28 +247,21 @@ function toggleComparar(id, boton) {
 }
 
 btnCompararFinal.addEventListener("click", () => {
-
     if (seleccionados.length < 2) {
-        alert("Selecciona al menos 2 productos");
+        mostrarNotificacion("⚠️ Selecciona al menos 2 productos");
         return;
     }
     compareModal.abrir(seleccionados);
 });
 
-// ===============================
-// VER DETALLE
-// ===============================
 function verDetalle(producto) {
     window.location.href = `producto.html?id=${producto._id}`;
 }
 
-// CUENTA
 btnCuenta.addEventListener("click", () => {
     window.location.href = "./account.html";
 });
-// ===============================
-// NAVBAR: IR AL CARRITO
-// ===============================
+
 const btnCarritoNav = document.getElementById("btn-carrito-nav");
 if (btnCarritoNav) {
     btnCarritoNav.addEventListener("click", () => {
@@ -288,10 +269,8 @@ if (btnCarritoNav) {
     });
 }
 
-// Inicializar contador
 actualizarContadorCarrito();
 
-// COLOR (INTACTO - VOLVEMOS A DARLE SOPORTE)
 const colorGuardado = localStorage.getItem("colorFondo");
 
 if (colorGuardado) {

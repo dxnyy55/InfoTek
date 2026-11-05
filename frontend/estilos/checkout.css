@@ -1,17 +1,16 @@
-/* ================================
-   LAYOUT GENERAL
-================================ */
+/*LAYOUT GENERAL*/
+
 .checkout-layout {
     width: 90%;
     max-width: 1300px;
-    margin: 40px auto;
+    margin: 0 auto;       /* Centra horizontalmente y anula márgenes raros */
+    padding-top: 40px;    /* Esto empuja el contenido hacia abajo de forma limpia */
     display: flex;
     gap: 40px;
 }
 
-/* ================================
-   FORMULARIO (SIN CAJA, PERO CON BLOQUE VISUAL)
-================================ */
+
+/*FORMULARIO (SIN CAJA, PERO CON BLOQUE VISUAL) */
 .checkout-box {
     flex: 2;
     padding: 40px 30px; /* MÁS ESPACIO LATERAL Y VERTICAL */
@@ -19,9 +18,8 @@
     border-radius: 12px;
 }
 
-/* ================================
-   TÍTULO PRINCIPAL
-================================ */
+/*   TÍTULO PRINCIPAL*/
+
 .box-title {
     font-size: 1.9rem;
     font-weight: 800;
@@ -39,9 +37,8 @@
     border-radius: 2px;
 }
 
-/* ================================
-   SUBTÍTULOS DE BLOQUES (si los usas)
-================================ */
+/*SUBTÍTULOS DE BLOQUES (si los usas)*/
+
 .form-section-title {
     font-size: 1.2rem;
     font-weight: 700;
@@ -58,13 +55,12 @@
     margin-top: 6px;
 }
 
-/* ================================
-   INPUTS PREMIUM
-================================ */
+/*INPUTS PREMIUM*/
+
 .form-grupo {
     display: flex;
     flex-direction: column;
-    margin-bottom: 25px; /* MÁS ESPACIO ENTRE INPUTS */
+    margin-bottom: 25px;
 }
 
 .form-grupo label {
@@ -75,7 +71,7 @@
 
 .form-grupo input,
 .form-grupo select {
-    padding: 16px 18px; /* MÁS ESPACIO INTERNO */
+    padding: 16px 18px;
     background: #eef1f6;
     border: 2px solid transparent;
     border-radius: 10px;
@@ -95,18 +91,16 @@
     box-shadow: 0 0 6px rgba(0,85,255,0.3);
 }
 
-/* ================================
-   GRID 2 COLUMNAS
-================================ */
+/*GRID 2 COLUMNAS*/
+
 .form-grid-2 {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 25px; /* MÁS ESPACIO ENTRE COLUMNAS */
 }
 
-/* ================================
-   BOTÓN PRINCIPAL
-================================ */
+/*BOTÓN PRINCIPAL */
+
 .btn-finalizar {
     width: 100%;
     margin-top: 35px; /* MÁS ESPACIO ANTES DEL BOTÓN */
@@ -125,9 +119,8 @@
     opacity: 0.9;
 }
 
-/* ================================
-   CAJA DE RESUMEN (ÚNICA CAJA)
-================================ */
+/*CAJA DE RESUMEN (ÚNICA CAJA)*/
+
 .checkout-resumen {
     flex: 1;
     background: #ffffff;
@@ -157,6 +150,7 @@
 }
 
 /* BOTÓN DE PAGO */
+
 .btn-pagar {
     width: 100%;
     margin-top: 25px;

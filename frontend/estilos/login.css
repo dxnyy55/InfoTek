@@ -166,3 +166,35 @@ html, body {
     cursor: pointer;
     font-weight: bold;
 }
+
+/* Estilo del botón cuando está cargando */
+.btn:disabled {
+    opacity: 0.8;
+    cursor: not-allowed;
+    background-color: #2a2a80;
+}
+
+/* Contenedor del icono del ventilador */
+.cpu-fan-spinner {
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    margin-right: 8px;
+    vertical-align: middle;
+    animation: girarVentilador 0.8s linear infinite;
+}
+
+/* Dibujo simplificado de las aspas de un ventilador de CPU */
+.cpu-fan-spinner::before {
+    content: "⚙️"; /* O un icono SVG/carácter que simule aspas */
+    font-size: 16px;
+}
+
+@keyframes girarVentilador {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}

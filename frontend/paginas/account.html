@@ -1,114 +1,115 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mi Cuenta - InfoTek</title>
-    <link rel="icon" type="image/png" href="../recursos/imagenes/logo2.png">
-    <link rel="stylesheet" href="../estilos/index.css">
-    <link rel="stylesheet" href="../estilos/account.css">
-</head>
-<body id="cuerpo-pagina">
-<header class="header">
-    <div class="header-contenido">
-        <div class="header-logo">
-            <a href="index.html" class="logo-link">
-                <img src="../recursos/imagenes/logo.png" alt="InfoTek">
-                <span class="logo-texto">InfoTek</span>
-            </a>
-        </div>
-        
-        <input type="text" class="buscador" placeholder="Buscar componentes...">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Mi Cuenta - InfoTek</title>
+        <link rel="icon" type="image/png" href="../recursos/imagenes/logo2.png">
+        <link rel="stylesheet" href="../estilos/index.css">
+        <link rel="stylesheet" href="../estilos/account.css">
+    </head>
+    <body id="cuerpo-pagina">
+        <header class="header">
+            <div class="header-contenido">
+                <div class="header-logo">
+                    <a href="index.html" class="header-logo">
+                        <img src="../recursos/imagenes/Logo.png" alt="InfoTek">
+                        <h1>InfoTek</h1>
+                    </a>
+                </div>
+                
+                <input type="text" class="buscador" placeholder="Buscar componentes...">
 
-        <div class="header-usuario">
-            <button class="btn-icon"><img src="../recursos/imagenes/comparar.png" alt="Comparar"></button>
-            
-            <button class="btn-icon" id="btn-carrito-nav" onclick="window.location.href='../paginas/carrito.html'">
-        <img src="../recursos/imagenes/carrito.png" alt="carrito">
-        <span id="carrito-count" class="carrito-count">0</span>
-    </button>
-            
-            <button class="btn-icon"><img src="../recursos/imagenes/usuario.png" alt="Usuario"></button>
-        </div>
-    </div>
-</header>
-
-<main class="contenedor-principal-cuenta">
-    <div class="seccion-bienvenida">
-        <h1 id="saludo-usuario">Hola, Sebas</h1>
-        <p>Gestiona tu información personal y la seguridad de tu cuenta.</p>
-    </div>
-
-    <div class="layout-grid-cuenta"> 
-        <div class="tarjeta-info">
-            <h2>Información personal</h2>
-            <div class="cuerpo-tarjeta">
-                <p><strong>Nombre:</strong> <span id="nombre-usuario">Sebas</span></p>
-                <p><strong>Apellido:</strong> <span id="apellido-usuario">Chachalo</span></p>
-                <p><strong>Email:</strong> <span id="email-usuario">sebas@gmail.com</span></p>
-                <p><strong>Sexo:</strong> <span id="sexo-usuario">Hombre</span></p>
-                <p><strong>Fecha de nacimiento:</strong> <span id="nacimiento-usuario">14/06/2004</span></p>
-            </div>
-            <div class="pie-tarjeta">
-                <button class="btn-accion primario" id="btn-editar">Editar información</button>
-                <button class="btn-accion peligro" id="cerrar-sesion">Cerrar sesión</button>
-            </div>
-        </div>
-
-        <div class="tarjeta-info">
-            <h2>Información de la cuenta</h2>
-            <div class="cuerpo-tarjeta">
-                <p><strong>Nombre de usuario:</strong> <span id="username">Sebas</span></p>
-                <p><strong>ID:</strong> <span id="user-id">69b1bff4c4a6d6159fc21827</span></p>
-                <p><strong>Código promocional:</strong> <span>NINGUNO</span></p>
-                <p><strong>Miembro desde:</strong> <span id="fecha-creacion">11/3/2026</span></p>
-            </div>
-        </div>
-
-        <div class="tarjeta-info tarjeta-sm">
-            <h2>Favoritos</h2>
-            <div class="cuerpo-tarjeta">
-                <p>Mira tus productos guardados para comprarlos más tarde.</p>
-            </div>
-            <div class="pie-tarjeta">
-                <button class="btn-accion primario" id="btn-favoritos">Mis favoritos</button>
-            </div>
-        </div>
-
-        <div class="tarjeta-info tarjeta-sm">
-            <h2>Mis Pedidos</h2>
-            <div class="cuerpo-tarjeta" id="contenedor-pedidos">
-                <p>No tienes pedidos recientes.</p>
-            </div>
-        </div>
-
-        <div class="tarjeta-info tarjeta-full">
-            <h2>Ajustes de Temas</h2>
-            <div class="cuerpo-tarjeta">
-                <div class="control-color">
-                    <p>Personaliza el color de fondo de la tienda:</p>
-                    <input type="color" id="selector-color-cuenta" class="input-color-largo">
+                <div class="header-usuario">
+                    <button class="btn-icon"><img src="../recursos/imagenes/comparar.png" alt="Comparar"></button>
+                    
+                    <button class="btn-icon" id="btn-carrito-nav" onclick="window.location.href='../paginas/carrito.html'">
+                        <img src="../recursos/imagenes/carrito.png" alt="carrito">
+                        <span id="carrito-count" class="carrito-count">0</span>
+                    </button>
+                    
+                    <button class="btn-icon"><img src="../recursos/imagenes/usuario.png" alt="Usuario"></button>
                 </div>
             </div>
-            <div class="pie-tarjeta">
-                <button id="guardar-color" class="btn-accion secundario">Guardar color</button>
-                <button id="restablecer-color" class="btn-accion">Restablecer</button>
+        </header>
+
+        <main class="contenedor-principal-cuenta">
+            <div class="seccion-bienvenida">
+                <h1 id="saludo-usuario">Hola, Usuario</h1>
+                <p>Gestiona tu información personal y la seguridad de tu cuenta.</p>
+            </div>
+
+            <div class="layout-grid-cuenta"> 
+                <div class="tarjeta-info">
+                    <h2>Información personal</h2>
+                    <div class="cuerpo-tarjeta">
+                        <p><strong>Nombre:</strong> <span id="nombre-usuario">-</span></p>
+                        <p><strong>Apellido:</strong> <span id="apellido-usuario">-</span></p>
+                        <p><strong>Email:</strong> <span id="email-usuario">-</span></p>
+                        <p><strong>Sexo:</strong> <span id="sexo-usuario">-</span></p>
+                        <p><strong>Fecha de nacimiento:</strong> <span id="nacimiento-usuario">-</span></p>
+                    </div>
+                    <div class="pie-tarjeta">
+                        <button class="btn-accion primario" id="btn-editar">Editar información</button>
+                        <button class="btn-accion peligro" id="cerrar-sesion">Cerrar sesión</button>
+                    </div>
+                </div>
+
+                <div class="tarjeta-info">
+                    <h2>Información de la cuenta</h2>
+                    <div class="cuerpo-tarjeta">
+                        <p><strong>Nombre de usuario:</strong> <span id="username">-</span></p>
+                        <p><strong>ID:</strong> <span id="user-id">-</span></p>
+                        <p><strong>Código promocional:</strong> <span>NINGUNO</span></p>
+                        <p><strong>Miembro desde:</strong> <span id="fecha-creacion">-</span></p>
+                    </div>
+                </div>
+
+                <div class="tarjeta-info tarjeta-sm">
+                    <h2>Favoritos</h2>
+                    <div class="cuerpo-tarjeta">
+                        <p>Mira tus productos guardados para comprarlos más tarde.</p>
+                    </div>
+                    <div class="pie-tarjeta">
+                        <button class="btn-accion primario" id="btn-favoritos">Mis favoritos</button>
+                    </div>
+                </div>
+
+                <div class="tarjeta-info tarjeta-sm">
+                    <h2>Mis Pedidos</h2>
+                    <div class="cuerpo-tarjeta" id="contenedor-pedidos">
+                        <p>No tienes pedidos recientes.</p>
+                    </div>
+                </div>
+
+                <div class="tarjeta-info tarjeta-full">
+                    <h2>Ajustes de Temas</h2>
+                    <div class="cuerpo-tarjeta">
+                        <div class="control-color">
+                            <p>Personaliza el color de fondo de la tienda:</p>
+                            <input type="color" id="selector-color-cuenta" class="input-color-largo">
+                        </div>
+                    </div>
+                    <div class="pie-tarjeta">
+                        <button id="guardar-color" class="btn-accion secundario">Guardar color</button>
+                        <button id="restablecer-color" class="btn-accion">Restablecer</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <div id="modal-localizador" class="modal-envio" style="display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); align-items: center; justify-content: center;">
+            <div class="modal-envio-contenido" style="background-color: #f8f9fa; padding: 25px; border-radius: 8px; width: 90%; max-width: 650px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); position: relative; font-family: sans-serif;">
+                <span id="cerrar-modal-envio" style="position: absolute; right: 20px; top: 15px; font-size: 24px; cursor: pointer; color: #666;">&times;</span>
+                
+                <h2 style="margin-top: 0; color: #333; font-size: 22px; font-weight: bold; border-bottom: 2px solid #ddd; padding-bottom: 10px;">Localizador de envíos</h2>
+                
+                <div id="contenido-dinamico-modal"></div>
             </div>
         </div>
-    </div>
-</main>
 
-<div id="modal-localizador" class="modal-envio" style="display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); align-items: center; justify-content: center;">
-    <div class="modal-envio-contenido" style="background-color: #f8f9fa; padding: 25px; border-radius: 8px; width: 90%; max-width: 650px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); position: relative; font-family: sans-serif;">
-        <span id="cerrar-modal-envio" style="position: absolute; right: 20px; top: 15px; font-size: 24px; cursor: pointer; color: #666;">&times;</span>
-        
-        <h2 style="margin-top: 0; color: #333; font-size: 22px; font-weight: bold; border-bottom: 2px solid #ddd; padding-bottom: 10px;">Localizador de envíos</h2>
-        
-        <div id="contenido-dinamico-modal"></div>
-    </div>
-</div>
-
-<script src="../scripts/account.js"></script>
-<script src="../scripts/buscador.js"></script> <script type="module" src="../scripts/navegacionCarrito.js"></script>
-</body>
+        <script src="../scripts/account.js"></script>
+        <script src="../scripts/buscador.js"></script> 
+        <script type="module" src="../scripts/navegacionCarrito.js"></script>
+    </body>
 </html>
