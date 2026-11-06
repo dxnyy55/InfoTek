@@ -77,7 +77,7 @@ if (btnEditar) {
         }
 
         try {
-            const res = await fetch(`http://localhost:3000/api/auth/update-user/${user.id || user._id}`, {
+            const res = await fetch(`https://infotek-j9pu.onrender.com/api/auth/update-user/${user.id || user._id}`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ name: nombre, apellido: apellido, sexo: sexo, nacimiento: nacimientoISO })
@@ -156,7 +156,6 @@ if (btnGuardarColor) {
     btnGuardarColor.addEventListener("click", () => {
         const nuevoColor = selectorCuenta.value;
         localStorage.setItem("colorFondo", nuevoColor);
-        // Se ha eliminado el alert() para una experiencia de usuario fluida
     });
 }
 

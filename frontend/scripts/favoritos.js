@@ -28,10 +28,10 @@ async function cargarFavoritos() {
     if (!usuarioId) return;
 
     try {
-        const resFav = await fetch(`http://localhost:3000/api/favoritos/${usuarioId}`);
+        const resFav = await fetch(`https://infotek-j9pu.onrender.com/api/favoritos/${usuarioId}`);
         const favoritos = await resFav.json();
 
-        const resProd = await fetch("http://localhost:3000/api/productos");
+        const resProd = await fetch("https://infotek-j9pu.onrender.com/api/productos");
         const productos = await resProd.json();
 
         const productosFav = productos.filter(p =>
@@ -71,7 +71,7 @@ function verDetalle(producto) {
 
 async function eliminarFavorito(producto) {
     try {
-        const res = await fetch("http://localhost:3000/api/favoritos", {
+        const res = await fetch("https://infotek-j9pu.onrender.com/api/favoritos", {
             method: "DELETE",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({

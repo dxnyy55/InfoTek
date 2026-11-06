@@ -9,7 +9,7 @@ const router = express.Router();
 const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-        user: 'infotek.oficial@gmail.com',         
+        user: 'infotek.oficial@gmail.com',        
         pass: 'okyx sskp gjqw ttyv' 
     }
 });
@@ -85,9 +85,20 @@ router.post('/login', async (req, res) => {
         }
 
         console.log("✔️ ¡Login exitoso!");
+        
+        // CORREGIDO: Devolvemos un objeto 'user' completo que incluye el _id y name 
+        // para que localStorage guarde exactamente lo que el frontend espera.
         res.status(200).json({ 
             message: "Inicio de sesión exitoso", 
-            usuario: { nombre: usuario.username || usuario.name, email: usuario.mailAdress } 
+            user: { 
+                id: usuario._id,
+                _id: usuario._id,
+                name: usuario.username || usuario.name, 
+                email: usuario.mailAdress,
+                apellido: usuario.apellido || "",
+                sexo: usuario.sexo || "",
+                nacimiento: usuario.nacimiento || ""
+            } 
         });
 
     } catch (error) {

@@ -5,7 +5,7 @@
 if (!window.productos) {
     window.productos = [];
 
-    fetch("http://localhost:3000/api/productos")
+    fetch("https://infotek-j9pu.onrender.com/api/productos")
         .then(res => res.json())
         .then(data => {
             window.productos = data;

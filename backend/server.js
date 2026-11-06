@@ -22,14 +22,10 @@ app.use(cors());
 app.use(express.json());
 
 // ===============================
-// SERVIR CARPETA RECURSOS (RUTA ABSOLUTA REAL)
+// SERVIR CARPETA RECURSOS EN PRODUCCIÓN
 // ===============================
-app.use(
-  "/recursos",
-  express.static(
-    "C:/Users/d.cabello/Documents/Info-Tek_007/Info_Tek/frontend/recursos"
-  )
-);
+// Apuntamos a la carpeta recursos dentro del repositorio para que Render pueda servir las imágenes correctamente
+app.use("/recursos", express.static(path.join(__dirname, "../frontend/recursos")));
 
 // MongoDB
 const uri = process.env.MONGO_URI;
@@ -42,7 +38,6 @@ async function connexionMongoDB() {
     // ==========================================
     // SISTEMA KEEP-ALIVE (Mantiene la BD despierta)
     // ==========================================
-    // Realiza un ping cada 5 minutos (300,000 ms) para evitar la suspensión por inactividad
     const INTERVALO_TIEMPO = 5 * 60 * 1000; 
 
     setInterval(async () => {
@@ -67,6 +62,8 @@ app.use("/api/productos", productosRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/favoritos", favoritosRoutes);
 
-app.listen(3000, () => {
-  console.log("Servidor en http://localhost:3000");
+// Puerto dinámico para Render con respaldo en el 3000 para local
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Servidor en puerto ${PORT}`);
 });

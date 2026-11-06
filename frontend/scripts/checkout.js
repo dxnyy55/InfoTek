@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-    // 1. TU LÓGICA DE COLOR (RESTAURADA)
+    // 1. LÓGICA DE COLOR (RESTAURADA)
     function aplicarColorTema() {
         const colorGuardado = localStorage.getItem("colorFondo");
         if (colorGuardado) {
@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     aplicarColorTema();
 
-    // 2. TU LÓGICA DE CARRITO (RESTAURADA)
+    // 2. LÓGICA DE CARRITO (RESTAURADA)
     const carrito = JSON.parse(localStorage.getItem("carrito")) || [];
     const subtotal = carrito.reduce((acc, p) => acc + p.precio * p.cantidad, 0);
     if(document.getElementById("subtotal")) document.getElementById("subtotal").textContent = subtotal.toFixed(2) + "€";
@@ -22,7 +22,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // 3. CARGA DE DATOS (AUTOCOMPLETADO)
     const user = JSON.parse(localStorage.getItem("user"));
     if (user && user.id) {
-        fetch(`http://localhost:3000/api/auth/get-user-data/${user.id}`)
+        fetch(`https://infotek-j9pu.onrender.com/api/auth/get-user-data/${user.id}`)
             .then(res => res.json())
             .then(data => {
                 if ((data.shippingInfo || data.billingInfo) && confirm("¿Quieres usar tus datos guardados?")) {
@@ -57,7 +57,7 @@ document.addEventListener("DOMContentLoaded", () => {
             poblacion: document.getElementById("poblacion").value,
             provincia: document.getElementById("provincia").value
         };
-        fetch(`http://localhost:3000/api/auth/update-shipping/${user.id}`, {
+        fetch(`https://infotek-j9pu.onrender.com/api/auth/update-shipping/${user.id}`, {
             method: 'PUT', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(dataEnvio)
         });
         document.getElementById("pago-section").classList.remove("oculto");
@@ -68,7 +68,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // 5. GUARDAR PAGO
     document.getElementById("btn-pagar").addEventListener("click", () => {
         if (document.getElementById("guardar-datos-pago").checked) {
-            fetch(`http://localhost:3000/api/auth/update-payment/${user.id}`, {
+            fetch(`https://infotek-j9pu.onrender.com/api/auth/update-payment/${user.id}`, {
                 method: 'PUT', headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({
                     payCard: document.getElementById("card-number").value,

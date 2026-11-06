@@ -9,7 +9,7 @@ const specificationsEl = document.getElementById("producto-especificaciones");
 const ratingEl = document.getElementById("producto-rating"); 
 
 
-// GENERAR ESTRELLas DE VALORACIÓN
+// GENERAR ESTRELLAS DE VALORACIÓN
 
 function generarEstrellas(rating) {
     if (!rating || rating <= 0) return "☆☆☆☆☆";
@@ -19,7 +19,7 @@ function generarEstrellas(rating) {
 }
 
 
-//ACTUALIZAR CONTADOR DEL CARRITO
+// ACTUALIZAR CONTADOR DEL CARRITO
 
 window.actualizarContadorCarritoGlobal = function() {
     const span = document.getElementById("carrito-count");
@@ -33,11 +33,11 @@ window.actualizarContadorCarritoGlobal = function() {
 };
 
 
-//CARGAR DATOS DEL PRODUCTO Y GALERÍA
+// CARGAR DATOS DEL PRODUCTO Y GALERÍA
 
 async function cargarProducto() {
     try {
-        const res = await fetch(`http://localhost:3000/api/productos/${id}`);
+        const res = await fetch(`https://infotek-j9pu.onrender.com/api/productos/${id}`);
         const producto = await res.json();
         if (!producto) return;
 
@@ -86,7 +86,7 @@ function renderizarGaleria(producto) {
         listaImagenes.forEach((url, index) => {
             const miniatura = document.createElement("img");
             miniatura.src = "../" + url;
-            miniatura.className = "miniatura"; // <-- Usa exactamente tu clase CSS
+            miniatura.className = "miniatura"; 
             
             if (index === 0) miniatura.classList.add("activa");
 
@@ -102,7 +102,7 @@ function renderizarGaleria(producto) {
     }
 }
 
-//GRÁFICA DE HISTORIAL DE PRECIOS
+// GRÁFICA DE HISTORIAL DE PRECIOS
 
 function generarGraficaIndividual(historial) {
     const contenedor = document.getElementById("contenedor-grafica");

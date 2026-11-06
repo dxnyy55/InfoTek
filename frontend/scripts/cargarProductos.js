@@ -56,7 +56,7 @@ async function renderizarProductos(lista) {
     if (usuario) {
         const userId = usuario.id || usuario._id;
         try {
-            const res = await fetch(`http://localhost:3000/api/favoritos/${userId}`);
+            const res = await fetch(`https://infotek-j9pu.onrender.com/api/favoritos/${userId}`);
             const favs = await res.json();
             idsFavoritos = favs.map(f => {
                 if (!f.productoId) return null;
@@ -157,7 +157,7 @@ function añadirCarrito(producto, boton, event) {
 }
 
 // CARGAR PRODUCTOS DESDE EL BACKEND
-fetch("http://localhost:3000/api/productos")
+fetch("https://infotek-j9pu.onrender.com/api/productos")
     .then(res => res.json())
     .then(data => {
         // Guardamos los productos exactamente en el orden que manda el backend (.sort(_id: 1))
@@ -197,7 +197,7 @@ function toggleFavorito(producto, boton) {
     };
 
     if (!activo) {
-        fetch("http://localhost:3000/api/favoritos", {
+        fetch("https://infotek-j9pu.onrender.com/api/favoritos", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(bodyData)
@@ -207,7 +207,7 @@ function toggleFavorito(producto, boton) {
         })
         .catch(err => console.error("Error al guardar favorito:", err));
     } else {
-        fetch("http://localhost:3000/api/favoritos", {
+        fetch("https://infotek-j9pu.onrender.com/api/favoritos", {
             method: "DELETE",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(bodyData)
