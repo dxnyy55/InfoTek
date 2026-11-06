@@ -118,6 +118,11 @@
         </div>
 
         <script>
+            // Definición dinámica de la URL del API según el entorno
+            const API_URL = window.location.hostname === 'localhost'
+                ? 'http://localhost:3000'
+                : 'https://infotek-j9pu.onrender.com';
+
             // Toggle del ojito de la contraseña
             const btnTogglePassword = document.getElementById("btnTogglePassword");
             const inputPassword = document.getElementById("password");
@@ -149,7 +154,7 @@
                 btnLogin.innerHTML = `<span class="cpu-fan-spinner"></span> Entrando...`;
 
                 try {
-                    const res = await fetch("http://localhost:3000/api/auth/login", {
+                    const res = await fetch(`${API_URL}/api/auth/login`, {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({ email, password })
